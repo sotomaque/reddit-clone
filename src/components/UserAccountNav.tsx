@@ -1,17 +1,30 @@
+'use client';
+
 import type { User } from 'next-auth';
 import { FC } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import UserAvatar from './UserAvatar';
+import Link from 'next/link';
+import { signOut } from 'next-auth/react';
 
 interface UserAccountNavProps {
   user: Pick<User, 'name' | 'image' | 'email'>;
 }
 
 const UserAccountNav: FC<UserAccountNavProps> = ({ user }) => {
+  const handleSignOut = (e: Event) => {
+    e.preventDefault();
+    signOut({
+      callbackUrl: `${window.location.origin}/sign-in`,
+    });
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -35,6 +48,27 @@ const UserAccountNav: FC<UserAccountNavProps> = ({ user }) => {
             )}
           </div>
         </div>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem asChild>
+          <Link href="/">Feed</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/r/create">Create Community</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/settings">Settings</Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+
+        <DropdownMenuItem
+          onSelect={(event) => handleSignOut(event)}
+          className="cursor-pointer"
+        >
+          Sign Out
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

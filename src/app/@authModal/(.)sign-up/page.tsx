@@ -1,5 +1,5 @@
-import { SignIn } from '@/components/SignIn';
 import CloseModal from './components/CloseModal';
+import { SignUp } from '@/app/(auth)/sign-up/components/SignUp';
 
 export default function Page() {
   return (
@@ -10,7 +10,7 @@ export default function Page() {
             <CloseModal />
           </div>
 
-          <SignIn />
+          <SignUp />
         </div>
       </div>
     </div>

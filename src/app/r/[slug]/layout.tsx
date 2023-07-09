@@ -1,16 +1,11 @@
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { format } from 'date-fns';
-import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
 import SubscribeLeaveToggle from './components/SubscribeLeaveToggle';
-
-export const metadata: Metadata = {
-  title: 'Breadit',
-  description: 'A Reddit clone built with Next.js and TypeScript.',
-};
+import { buttonVariants } from '@/components/ui/button';
+import Link from 'next/link';
 
 const Layout = async ({
   children,
@@ -98,6 +93,17 @@ const Layout = async ({
                   subredditName={subreddit.name}
                 />
               ) : null}
+
+              {/* Post Button */}
+              <Link
+                className={buttonVariants({
+                  variant: 'outline',
+                  className: 'w-full mb-6',
+                })}
+                href={`/r/${subreddit.name}/submit`}
+              >
+                Create Post
+              </Link>
             </dl>
           </div>
         </div>

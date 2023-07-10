@@ -7,6 +7,7 @@ import { db } from '@/lib/db';
 import { formatTimeToNow } from '@/lib/utils';
 import { Post, User, Vote } from '@prisma/client';
 import { redis } from '@/lib/redis';
+import CommentsSection from '@/components/CommentsSection';
 import EditorOutput from '@/components/EditorOutput';
 import PostVoteServer from '@/components/post-vote/PostVoteServer';
 import type { CachedPost } from '@/types/redis';
@@ -79,6 +80,12 @@ const PostPage = async ({ params }: PageProps) => {
 
         {/* Content */}
         <EditorOutput content={post?.content ?? cachedPost.content} />
+
+        <Suspense
+          fallback={<Loader2 className="h-5 w-5 animate-spin text-zinc-500" />}
+        >
+          <CommentsSection postId={post ? post.id : cachedPost.id} />
+        </Suspense>
       </div>
     </div>
   );

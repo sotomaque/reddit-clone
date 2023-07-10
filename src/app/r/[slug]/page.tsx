@@ -1,9 +1,11 @@
-import MiniCreatePost from '@/components/MiniCreatePost';
-import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config';
-import { getAuthSession } from '@/lib/auth';
-import { db } from '@/lib/db';
 import { notFound } from 'next/navigation';
-import { FC } from 'react';
+import type { FC } from 'react';
+
+import { db } from '@/lib/db';
+import { getAuthSession } from '@/lib/auth';
+import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config';
+import MiniCreatePost from '@/components/MiniCreatePost';
+import PostFeed from '@/components/PostFeed';
 
 interface PageProps {
   params: {
@@ -42,7 +44,7 @@ const SubredditPage: FC<PageProps> = async ({ params }) => {
       </h1>
 
       <MiniCreatePost session={session} />
-      {/* TODO: show posts in user feed */}
+      <PostFeed initialPosts={subreddit.posts} subredditName={subreddit.name} />
     </>
   );
 };

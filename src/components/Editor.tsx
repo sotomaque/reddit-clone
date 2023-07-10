@@ -1,17 +1,17 @@
 'use client';
 
-import EditorJS from '@editorjs/editorjs';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
+import { usePathname, useRouter } from 'next/navigation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import axios from 'axios';
+import EditorJS from '@editorjs/editorjs';
 import TextareaAutosize from 'react-textarea-autosize';
-import { z } from 'zod';
 
 import { toast } from '@/hooks/use-toast';
 import { uploadFiles } from '@/lib/uploadthing';
-import { PostValidator } from '@/lib/validators/post';
-
-type FormData = z.infer<typeof PostValidator>;
+import { PostCreationRequest, PostValidator } from '@/lib/validators/post';
 
 interface EditorProps {
   subredditId: string;
@@ -22,7 +22,7 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<PostCreationRequest>({
     resolver: zodResolver(PostValidator),
     defaultValues: {
       subredditId,
@@ -31,7 +31,53 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
     },
   });
   const ref = useRef<EditorJS>();
+  const _titleRef = useRef<HTMLTextAreaElement>(null);
   const [isMounted, setIsMounted] = useState<boolean>(false);
+  const pathname = usePathname();
+  const router = useRouter();
+  const { mutateAsync: createPost } = useMutation({
+    mutationFn: async ({
+      title,
+      content,
+      subredditId,
+    }: PostCreationRequest) => {
+      const payload: PostCreationRequest = {
+        title,
+        content,
+        subredditId,
+      };
+      const { data } = await axios.post('/api/subreddit/post/create', payload);
+
+      return data;
+    },
+    onError: () => {
+      return toast({
+        title: 'Something went wrong.',
+        description: 'Post could not be published. Please try again later.',
+        variant: 'destructive',
+      });
+    },
+    onSuccess: () => {
+      // redirect user to subreddit page (without `/submit`)
+      const newPathname = pathname.split('/').slice(0, -1).join('/');
+      router.push(newPathname);
+      router.refresh();
+      return toast({
+        description: 'Your post has been published.',
+      });
+    },
+  });
+
+  const onSubmit = async (data: PostCreationRequest) => {
+    const blocks = await ref.current?.save();
+    const payload: PostCreationRequest = {
+      title: data.title,
+      content: blocks,
+      subredditId,
+    };
+
+    await createPost(payload);
+  };
 
   const initializeEditor = useCallback(async () => {
     const EditorJS = (await import('@editorjs/editorjs')).default;
@@ -116,22 +162,57 @@ export const Editor: React.FC<EditorProps> = ({ subredditId }) => {
     const init = async () => {
       await initializeEditor();
 
-      setTimeout(() => {}, 0);
+      setTimeout(() => {
+        _titleRef.current?.focus();
+      }, 0);
     };
 
     if (isMounted) {
       init();
 
-      return () => {};
+      return () => {
+        ref.current?.destroy();
+        ref.current = undefined;
+      };
     }
   }, [isMounted, initializeEditor]);
 
+  // Error Handling
+  useEffect(() => {
+    if (Object.keys(errors).length) {
+      for (const [_key, value] of Object.entries(errors)) {
+        toast({
+          title: 'Something went wrong.',
+          description: (value as { message: string }).message,
+          variant: 'destructive',
+        });
+      }
+    }
+  }, [errors]);
+
+  // share ref with react-hook-form
+  const { ref: titleRef, ...rest } = register('title');
+
+  if (!isMounted) {
+    return null;
+  }
+
   return (
     <div className="w-full p-4 bg-zinc-50 rounded-lg border border-zinc-200">
-      <form id="subreddit-post-form" className="w-fit">
+      <form
+        id="subreddit-post-form"
+        className="w-fit"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <div className="prose prose-stone dark:prose-invert">
           <TextareaAutosize
             placeholder="Title"
+            ref={(e) => {
+              titleRef(e);
+              // @ts-ignore next-line
+              _titleRef.current = e;
+            }}
+            {...rest}
             className="w-full resize-none appearance-none overflow-hidden bg-transparent text-5xl font-bold focus:outline-none"
           />
           <div id="editor" className="min-h-[500px]" />

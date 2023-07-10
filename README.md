@@ -25,3 +25,7 @@ NextJS
 Redis
 
 Shadcn-ui
+
+Uploadthing
+
+EditorJS

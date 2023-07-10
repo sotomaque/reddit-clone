@@ -55,8 +55,44 @@ const CommentsSection: FC<CommentsSectionProps> = async ({ postId }) => {
             return (
               <div className="flex flex-col" key={topLevelComment.id}>
                 <div className="mb-2">
-                  <PostComment comment={topLevelComment} />
+                  <PostComment
+                    comment={topLevelComment}
+                    currentVote={topLevelCommentVote}
+                    postId={postId}
+                    votesAmount={topLevelCommentVoteAmount}
+                  />
                 </div>
+
+                {/* Replies */}
+                {topLevelComment.replies
+                  .sort((a, b) => b.votes.length - a.votes.length)
+                  .map((reply) => {
+                    const replyVotesAmount = reply.votes.reduce((acc, vote) => {
+                      if (vote.type === 'UP') {
+                        return acc + 1;
+                      } else {
+                        return acc - 1;
+                      }
+                    }, 0);
+
+                    const replyVote = reply.votes.find(
+                      (vote) => vote.userId === session?.user.id
+                    );
+
+                    return (
+                      <div
+                        className="ml-2 py-2 pl-2 border-l-2 border-zinc-200"
+                        key={reply.id}
+                      >
+                        <PostComment
+                          comment={reply}
+                          currentVote={replyVote}
+                          postId={postId}
+                          votesAmount={replyVotesAmount}
+                        />
+                      </div>
+                    );
+                  })}
               </div>
             );
           })}

@@ -2,7 +2,7 @@
 
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useIntersection } from '@mantine/hooks';
-import { useRef, type FC } from 'react';
+import { useRef, type FC, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import axios from 'axios';
 
@@ -40,6 +40,13 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName }) => {
   const { data: session } = useSession();
   const posts = data?.pages.flatMap((page) => page) ?? initialPosts;
 
+  // pagination
+  useEffect(() => {
+    if (entry?.isIntersecting) {
+      fetchNextPage();
+    }
+  }, [entry, fetchNextPage]);
+
   return (
     <ul className="flex flex-col col-span-2 space-y-6">
       {posts.map((post, index) => {
@@ -62,6 +69,8 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName }) => {
                 commentAmount={post.comments.length}
                 post={post}
                 subredditName={post.subreddit.name}
+                currentVote={currentVote}
+                votesAmount={votesAmount}
               />
             </li>
           );
@@ -73,6 +82,8 @@ const PostFeed: FC<PostFeedProps> = ({ initialPosts, subredditName }) => {
             key={post.id}
             post={post}
             subredditName={post.subreddit.name}
+            currentVote={currentVote}
+            votesAmount={votesAmount}
           />
         );
       })}

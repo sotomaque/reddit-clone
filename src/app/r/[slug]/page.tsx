@@ -28,7 +28,9 @@ const SubredditPage: FC<PageProps> = async ({ params }) => {
           comments: true,
           subreddit: true,
         },
-
+        orderBy: {
+          createdAt: 'desc',
+        },
         take: INFINITE_SCROLL_PAGINATION_RESULTS,
       },
     },

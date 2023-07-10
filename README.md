@@ -29,3 +29,5 @@ Shadcn-ui
 Uploadthing
 
 EditorJS
+
+Upstash (redis)

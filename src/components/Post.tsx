@@ -51,7 +51,7 @@ const Post: FC<PostProps> = ({
                 >
                   r/{subredditName}
                 </a>
-                <span className="px-1">-</span>
+                <span className="px-1">·</span>
               </>
             ) : null}
             <span>Posted by u/{post.author.username}</span>{' '}
@@ -59,7 +59,7 @@ const Post: FC<PostProps> = ({
           </div>
 
           {/* Title */}
-          <a href={`/r/${subredditName}/${post.id}`}>
+          <a href={`/r/${subredditName}/post/${post.id}`}>
             <h1 className="text-lg font-semibold py-2 leading-6 text-gray-900">
               {post.title}
             </h1>
@@ -82,7 +82,7 @@ const Post: FC<PostProps> = ({
       {/* Link to Comments */}
       <div className="bg-gray-50 z-20 text-sm p-4 sm:px-6">
         <a
-          href={`/r/${subredditName}/${post.id}`}
+          href={`/r/${subredditName}/post/${post.id}`}
           className="w-fit flex items-center gap-2"
         >
           <MessageSquare className="h-4 w-4" />

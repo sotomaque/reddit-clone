@@ -81,7 +81,6 @@ export async function PATCH(req: Request) {
             content: JSON.stringify(post.content),
             id: post.id,
             title: post.title,
-            currentVote: voteType,
             createdAt: post.createdAt,
           };
 
@@ -115,7 +114,6 @@ export async function PATCH(req: Request) {
           content: JSON.stringify(post.content),
           id: post.id,
           title: post.title,
-          currentVote: voteType,
           createdAt: post.createdAt,
         };
 

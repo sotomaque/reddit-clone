@@ -9,14 +9,14 @@ import {
   CommandItem,
   CommandList,
 } from './ui/command';
-import { useQuery } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
 import { Users } from 'lucide-react';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 
-import type { Prisma, Subreddit } from '@prisma/client';
 import { useOnClickOutside } from '@/hooks/useClickOutside';
+import type { Prisma, Subreddit } from '@prisma/client';
 
 export const Searchbar: FC = () => {
   const [input, setInput] = useState('');

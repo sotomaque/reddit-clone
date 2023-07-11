@@ -3,6 +3,7 @@ import { buttonVariants } from '@/components/ui/button';
 import { getAuthSession } from '@/lib/auth';
 import Link from 'next/link';
 import UserAccountNav from './UserAccountNav';
+import { Searchbar } from './Searchbar';
 
 export const Navbar = async () => {
   const session = await getAuthSession();
@@ -18,7 +19,7 @@ export const Navbar = async () => {
           </p>
         </Link>
 
-        {/* TODO: Search */}
+        <Searchbar />
 
         {/* Auth */}
         {session?.user ? (

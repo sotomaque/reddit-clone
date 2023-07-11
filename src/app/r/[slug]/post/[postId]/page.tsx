@@ -12,16 +12,15 @@ import EditorOutput from '@/components/EditorOutput';
 import PostVoteServer from '@/components/post-vote/PostVoteServer';
 import type { CachedPost } from '@/types/redis';
 
-interface PageProps {
+interface SubRedditPostPageProps {
   params: {
     postId: string;
   };
 }
-
 export const dynamic = 'force-dynamic';
-export const forceCache = 'force-no-store';
+export const fetchCache = 'force-no-store';
 
-const PostPage = async ({ params }: PageProps) => {
+const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
   const cachedPost = (await redis.hgetall(
     `post:${params.postId}`
   )) as CachedPost;
@@ -120,4 +119,4 @@ const PostVoteShell = () => {
   );
 };
 
-export default PostPage;
+export default SubRedditPostPage;

@@ -17,7 +17,7 @@ const MiniCreatePost: FC<MiniCreatePostProps> = ({ session }) => {
   const pathname = usePathname();
 
   const handleOnClick = () => {
-    router.push(`${pathname}/submit`, { shallow: true });
+    router.push(`${pathname}/submit`);
   };
 
   return (

@@ -1,6 +1,6 @@
 'use client';
 
-import { type FC, useCallback, useState, useRef } from 'react';
+import { type FC, useCallback, useState, useRef, useEffect } from 'react';
 import {
   Command,
   CommandEmpty,
@@ -10,7 +10,7 @@ import {
   CommandList,
 } from './ui/command';
 import { useQuery } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Users } from 'lucide-react';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
@@ -40,6 +40,7 @@ export const Searchbar: FC = () => {
     enabled: false,
   });
   const router = useRouter();
+  const pathname = usePathname();
   const commandRef = useRef<HTMLDivElement>(null);
   const request = debounce(async () => {
     refetch();
@@ -57,6 +58,10 @@ export const Searchbar: FC = () => {
     router.push(`/r/${result}`);
     router.refresh();
   };
+
+  useEffect(() => {
+    setInput('');
+  }, [pathname]);
 
   return (
     <Command

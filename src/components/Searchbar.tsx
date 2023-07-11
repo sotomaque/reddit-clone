@@ -1,6 +1,6 @@
 'use client';
 
-import { type FC, useCallback, useState } from 'react';
+import { type FC, useCallback, useState, useRef } from 'react';
 import {
   Command,
   CommandEmpty,
@@ -16,6 +16,7 @@ import axios from 'axios';
 import debounce from 'lodash.debounce';
 
 import type { Prisma, Subreddit } from '@prisma/client';
+import { useOnClickOutside } from '@/hooks/useClickOutside';
 
 export const Searchbar: FC = () => {
   const [input, setInput] = useState('');
@@ -39,10 +40,14 @@ export const Searchbar: FC = () => {
     enabled: false,
   });
   const router = useRouter();
-
+  const commandRef = useRef<HTMLDivElement>(null);
   const request = debounce(async () => {
     refetch();
   }, 300);
+
+  useOnClickOutside(commandRef, () => {
+    setInput('');
+  });
 
   const debounceRequest = useCallback(() => {
     request();
@@ -54,7 +59,10 @@ export const Searchbar: FC = () => {
   };
 
   return (
-    <Command className="relative rounded-lg border max-w-lg z-50 overflow-visible">
+    <Command
+      ref={commandRef}
+      className="relative rounded-lg border max-w-lg z-50 overflow-visible"
+    >
       <CommandInput
         className="outline-none border-none focus:border-none focus:outline-none ring-0"
         placeholder="Search communities..."

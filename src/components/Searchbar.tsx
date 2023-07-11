@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useCallback, useState } from 'react';
+import { type FC, useCallback, useState } from 'react';
 import {
   Command,
   CommandEmpty,
@@ -10,15 +10,14 @@ import {
   CommandList,
 } from './ui/command';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
-import type { Prisma, Subreddit } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import { Users } from 'lucide-react';
+import axios from 'axios';
 import debounce from 'lodash.debounce';
 
-interface SearchbarProps {}
+import type { Prisma, Subreddit } from '@prisma/client';
 
-export const Searchbar: FC<SearchbarProps> = ({}) => {
+export const Searchbar: FC = () => {
   const [input, setInput] = useState('');
   const {
     data: queryResults,
